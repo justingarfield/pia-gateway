@@ -28,7 +28,7 @@ RUN git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /
 ### Custom versions of "/src/manual-connections/run_setup.sh" and "/usr/bin/wg-quick"
 #   Use 'echo > 1 /proc_w/sys/...' instead of 'sysctl'
 RUN rm /home/kah/manual-connections/run_setup.sh
-COPY --chown=kah:kah --chmod=500 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
+COPY --chown=kah:kah --chmod=555 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
 
 # Env vars that the PIA script accepts
 ENV PIA_USER="" \
