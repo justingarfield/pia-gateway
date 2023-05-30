@@ -10,8 +10,8 @@ WORKDIR /
 # inotify-tools -> inotifyd for dnsmask resolv.conf reload circumvention
 RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools
 
-# RUN rm /usr/bin/wg-quick
-# COPY --chmod=500 ./scripts/wg-quick /usr/bin/wg-quick
+RUN rm /usr/bin/wg-quick
+COPY --chmod=555 ./scripts/wg-quick /usr/bin/wg-quick
 
 ### Private Internet Access repository and scripts
 ARG PIA_BRANCH=master

@@ -228,8 +228,8 @@ ${green}Defaulting to yes.${nc}
 "
   # sysctl -w net.ipv6.conf.all.disable_ipv6=1
   # sysctl -w net.ipv6.conf.default.disable_ipv6=1
-  echo 1 > /proc_w/sys/net/ipv6/conf/all/disable_ipv6
-  echo 1 > /proc_w/sys/net/ipv6/conf/default/disable_ipv6
+  # echo 1 > /proc_w/sys/net/ipv6/conf/all/disable_ipv6
+  # echo 1 > /proc_w/sys/net/ipv6/conf/default/disable_ipv6
   echo
   echo -e "${red}IPv6 has been disabled${nc}, you can ${green}enable it again with: "
   echo "sysctl -w net.ipv6.conf.all.disable_ipv6=0"
