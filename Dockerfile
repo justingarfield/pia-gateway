@@ -10,23 +10,25 @@ WORKDIR /
 # inotify-tools -> inotifyd for dnsmask resolv.conf reload circumvention
 RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools
 
+RUN rm /usr/bin/wg-quick
+COPY --chmod=500 ./scripts/wg-quick /usr/bin/wg-quick
+
 ### Private Internet Access repository and scripts
 ARG PIA_BRANCH=master
 ARG PIA_REPO=https://github.com/pia-foss/manual-connections
 ARG PIA_TAG=v2.0.0
 
-RUN mkdir /src \
-    && git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /src/manual-connections \
-    && cd src/manual-connections \
+USER kah:kah
+
+RUN git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /home/kah/manual-connections \
+    && cd /home/kah/manual-connections \
     && git fetch --all --tags \
     && git checkout tags/${PIA_TAG}
 
 ### Custom versions of "/src/manual-connections/run_setup.sh" and "/usr/bin/wg-quick"
 #   Use 'echo > 1 /proc_w/sys/...' instead of 'sysctl'
-RUN rm /src/manual-connections/run_setup.sh /usr/bin/wg-quick
-COPY ./scripts/wg-quick /usr/bin/wg-quick
-COPY ./scripts/run_setup.sh /src/manual-connections/run_setup.sh
-RUN chmod +x /usr/bin/wg-quick /src/manual-connections/run_setup.sh
+RUN rm /home/kah/manual-connections/run_setup.sh
+COPY --chown=kah:kah --chmod=500 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
 
 # Env vars that the PIA script accepts
 ENV PIA_USER="" \
