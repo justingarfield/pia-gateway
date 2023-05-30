@@ -10,8 +10,8 @@ WORKDIR /
 # inotify-tools -> inotifyd for dnsmask resolv.conf reload circumvention
 RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools
 
-RUN rm /usr/bin/wg-quick
-COPY --chmod=500 ./scripts/wg-quick /usr/bin/wg-quick
+# RUN rm /usr/bin/wg-quick
+# COPY --chmod=500 ./scripts/wg-quick /usr/bin/wg-quick
 
 ### Private Internet Access repository and scripts
 ARG PIA_BRANCH=master
@@ -27,13 +27,13 @@ RUN git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /
 
 ### Custom versions of "/src/manual-connections/run_setup.sh" and "/usr/bin/wg-quick"
 #   Use 'echo > 1 /proc_w/sys/...' instead of 'sysctl'
-RUN rm /home/kah/manual-connections/run_setup.sh
-COPY --chown=kah:kah --chmod=555 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
+# RUN rm /home/kah/manual-connections/run_setup.sh
+# COPY --chown=kah:kah --chmod=555 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
 
 # Env vars that the PIA script accepts
 ENV PIA_USER="" \
     PIA_PASS="" \
-    DIP_TOKEN="" \
+    DIP_TOKEN="no" \
     PIA_DNS=true \
     PIA_PF=false \
     # set to false maybe?
