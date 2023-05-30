@@ -8,7 +8,7 @@ WORKDIR /
 # coreutils -> need REAL chown and chmod for dhclient (it uses reference option not supported in busybox)
 # bash -> for scripting logic
 # inotify-tools -> inotifyd for dnsmask resolv.conf reload circumvention
-RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools
+RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools nftables
 
 RUN rm /usr/bin/wg-quick
 COPY --chmod=555 ./scripts/wg-quick /usr/bin/wg-quick
