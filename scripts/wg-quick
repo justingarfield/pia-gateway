@@ -239,8 +239,8 @@ add_default() {
 	printf -v nftcmd '%sadd rule %s %s premangle meta l4proto udp meta mark set ct mark \n' "$nftcmd" "$pf" "$nftable"
 	# [[ $proto == -4 ]] && cmd echo 1 > /proc_w/sys/net/ipv4/conf/all/src_valid_mark
 	if type -p nft >/dev/null; then
-		cmd echo -n "$nftcmd" > nft-cmds
-		cmd nft --file nft-cmds
+		cmd echo -n "$nftcmd" > /home/kah/nft-cmds
+		cmd nft --file /home/kah/nft-cmds
 	else
 		echo -n "$restore" | cmd $iptables-restore -n
 	fi
