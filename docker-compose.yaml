@@ -1,0 +1,18 @@
+---
+version: "3.7"
+
+services:
+  pia-gateway:
+    image: localhost:5010/pia-gateway:dev@sha256:72f71978aa4a8c0d22da7af7bb1f2b286444269dd6524251f0e03fa5a8190c51
+    environment:
+      - PIA_USER=$PIA_USER
+      - PIA_PASS=$PIA_PASS
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+      - net.ipv4.conf.all.src_valid_mark=1

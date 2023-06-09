@@ -1,4 +1,4 @@
-FROM ghcr.io/onedr0p/alpine:3.18.0@sha256:dd504f02473c176a0e68e4550ccaf6f6c0f14e9f64c08a59877f9c6153bf48a9
+FROM ghcr.io/onedr0p/ubuntu:jammy-20230522@sha256:5611f930d6f1fed0731748a889016b031d34d875c6771c6972d314f356c2a23f
 WORKDIR /
 
 # iproute2 -> bridge
@@ -8,10 +8,14 @@ WORKDIR /
 # coreutils -> need REAL chown and chmod for dhclient (it uses reference option not supported in busybox)
 # bash -> for scripting logic
 # inotify-tools -> inotifyd for dnsmask resolv.conf reload circumvention
-RUN apk add --no-cache coreutils dhclient dnsmasq-dnssec git inotify-tools iproute2 wireguard-tools nftables
+RUN apt-get update \
+    && apt-get install -y git wireguard-tools iproute2 iptables
 
-RUN rm /usr/bin/wg-quick
-COPY --chmod=555 ./scripts/wg-quick /usr/bin/wg-quick
+# RUN rm /usr/bin/wg-quick
+# COPY --chmod=555 ./scripts/wg-quick /usr/bin/wg-quick
+
+# RUN mkdir /app \
+#    && chown kah:kah /app
 
 ### Private Internet Access repository and scripts
 ARG PIA_BRANCH=master
@@ -20,19 +24,19 @@ ARG PIA_TAG=v2.0.0
 
 USER kah:kah
 
-RUN git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /home/kah/manual-connections \
-    && cd /home/kah/manual-connections \
+RUN git clone --branch "${PIA_BRANCH}" --single-branch --depth 1 "${PIA_REPO}" /app \
+    && cd /app \
     && git fetch --all --tags \
     && git checkout tags/${PIA_TAG}
 
 ### Custom versions of "/src/manual-connections/run_setup.sh" and "/usr/bin/wg-quick"
 #   Use 'echo > 1 /proc_w/sys/...' instead of 'sysctl'
-RUN rm /home/kah/manual-connections/run_setup.sh
-COPY --chown=kah:kah --chmod=555 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
+# RUN rm /home/kah/manual-connections/run_setup.sh
+# COPY --chown=kah:kah --chmod=555 ./scripts/run_setup.sh /home/kah/manual-connections/run_setup.sh
 
 # Env vars that the PIA script accepts
-ENV PIA_USER="" \
-    PIA_PASS="" \
+ENV PIA_USER= \
+    PIA_PASS= \
     DIP_TOKEN="no" \
     PIA_DNS=true \
     PIA_PF=false \
@@ -46,5 +50,10 @@ ENV PIA_USER="" \
     DISABLE_IPV6=yes
 
 # WORKDIR /src
-ENTRYPOINT ["tail", "-f", "/dev/null"]
-# ENTRYPOINT ["./src/manual-connections/run_setup.sh"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+USER root
+# RUN mkdir -p /dev/fd/63
+# RUN touch /dev/fd/63
+WORKDIR /app
+ENTRYPOINT ["./run_setup.sh", "&&", "tail", "-f", "/dev/null"]
